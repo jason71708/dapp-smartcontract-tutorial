@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Dapp</title>
+  <title>Advance Practice | Mint NFT</title>
 </head>
 <body>
   <h1 id="addressEl"></h1>
   <h2 id="balanceEl"></h2>
   <button id="connectBtn">Connect</button>
-  <button id="contractBtn" style="visibility: hidden;">Get Contract Greeting!</button>
-  <input id="inputEl" style="visibility: hidden;" type="text">
+  <p id="nftPriceEl" style="visibility: hidden;"></p>
+  <button id="contractBtn" style="visibility: hidden;">Mint NFT</button>
+  <h1 id="nftNameEl"></h1>
+  <img id="nftImageEl">
 
   <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
   <script>
@@ -19,13 +21,16 @@
     const balanceEl = document.querySelector('#balanceEl');
     const connectBtn = document.querySelector('#connectBtn');
     const contractBtn = document.querySelector('#contractBtn');
-    const inputEl = document.querySelector('#inputEl');
+    const nftPriceEl = document.querySelector('#nftPriceEl');
+    const nftNameEl = document.querySelector('#nftNameEl');
+    const nftImageEl = document.querySelector('#nftImageEl');
 
     let address;
     let balance;
     let provider;
     let contractJson;
     let contract;
+    let nftPrice;
 
     const connectWallet = async () => {
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -48,58 +53,45 @@
     }
 
     const initContract = async () => {
-      // provider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
       provider = new ethers.providers.Web3Provider(window.ethereum);
-      contractJson = await fetch('smart-contract/artifacts/contracts/Greeter.sol/Greeter.json').then(res => res.json());
+      contractJson = await fetch('artifacts/contracts/MemeCat.sol/MemeCat.json').then(res => res.json());
 
       contract = new ethers.Contract(
-        '0xdc64a140aa3e981100a9beca4e685f962f0cf6c9',
+        '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
         contractJson.abi,
-        // provider
         provider.getSigner()
       );
 
       contractBtn.style.visibility = 'visible';
-      contractBtn.addEventListener('click', getContractGreeting);
-      inputEl.style.visibility = 'visible';
-      inputEl.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          setContractGreeting();
-        }
-      });
+      contractBtn.addEventListener('click', mintNFT);
+
+      nftPriceEl.style.visibility = 'visible';
+      rawNftPrice = await contract.mintPrice();
+      nftPrice = ethers.utils.formatEther(rawNftPrice);
+      nftPriceEl.innerText = nftPrice
     }
 
-    const getContractGreeting = async () => {
-      const greeting = await contract.greet();
-      alert(greeting);
+    const getNFTInfo = async (tokenId) => {
+      const nftURI = await contract.tokenURI(tokenId)
+      const response = await fetch(nftURI)
+      const nftMeta = await response.json()
+      nftNameEl.innerText = nftMeta.name
+      nftImageEl.src = nftMeta.image
     }
 
-    const setContractGreeting = async () => {
-      const greeting = inputEl.value;
-      await contract.setGreeting(greeting);
-      inputEl.value = '';
-      alert('Greeting set!');
+    const mintNFT = async () => {
+      const result = await contract.mintMemeCat({
+        value: ethers.utils.parseEther(nftPrice),
+      })
+      const response = await result.wait()
+      console.log('mintNFT response', response)
+      const tokenId = response.events[0].args.tokenId
+      getNFTInfo(tokenId)
     }
 
     if (window.ethereum) {
       connectBtn.addEventListener('click', connectWallet);
     };
-  </script>
-  <script>
-    /*
-    * Advanced usage:
-    */
-    ethereum.on('accountsChanged', (accounts) => {
-      // Handle the new accounts, or lack thereof.
-      // "accounts" will always be an array, but it can be empty.
-    });
-
-    ethereum.on('chainChanged', (chainId) => {
-      // Handle the new chain.
-      // Correctly handling chain changes can be complicated.
-      // We recommend reloading the page unless you have good reason not to.
-      window.location.reload();
-    });
   </script>
 </body>
 </html>
