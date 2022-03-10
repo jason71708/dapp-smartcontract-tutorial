@@ -1,6 +1,6 @@
 # Dapp & smart contract development tutorials
 
-## Smart contract
+## Simple Smart contract
 
 ```bash
 mkdir smart-contract
@@ -12,7 +12,7 @@ cd smart-contract
 ### Install
 
 ```bash
-npm install --save-dev hardhat
+npx hardhat
 ```
 
 ### Build
@@ -60,3 +60,9 @@ npx hardhat --network localhost faucet <your address>
 ## Dapp
 
 Finish `index-START.html` file.
+
+## ERC721 Contract development
+
+```bash
+npm install @openzeppelin/contracts
+```

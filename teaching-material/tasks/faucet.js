@@ -20,5 +20,5 @@ task("faucet", "Sends ETH an address")
     });
     await tx.wait();
 
-    console.log(`Transferred 1 ETH to ${receiver}`);
+    console.log(`Transferred 10 ETH to ${receiver}`);
   });
