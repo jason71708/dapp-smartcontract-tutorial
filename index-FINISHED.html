@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Dapp</title>
+</head>
+<body>
+  <h1 id="addressEl"></h1>
+  <h2 id="balanceEl"></h2>
+  <button id="connectBtn">Connect</button>
+  <button id="contractBtn" style="visibility: hidden;">Get Contract Greeting!</button>
+  <input id="inputEl" style="visibility: hidden;" type="text">
+
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+  <script>
+    const addressEl = document.querySelector('#addressEl');
+    const balanceEl = document.querySelector('#balanceEl');
+    const connectBtn = document.querySelector('#connectBtn');
+    const contractBtn = document.querySelector('#contractBtn');
+    const inputEl = document.querySelector('#inputEl');
+
+    let address;
+    let balance;
+    let provider;
+    let contractJson;
+    let contract;
+
+    const connectWallet = async () => {
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      address = accounts[0];
+      addressEl.innerText = address;
+
+      await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x7A69' }],
+      });
+
+      const rawBalance = await ethereum.request({ method: 'eth_getBalance', params: [accounts[0], 'latest'] });
+      balance = ethers.utils.formatEther(rawBalance);
+      balanceEl.innerText = balance
+
+      connectBtn.style.visibility = 'hidden';
+      connectBtn.removeEventListener('click', connectWallet);
+
+      initContract()
+    }
+
+    const getContractGreeting = async () => {
+      const greeting = await contract.greet();
+      alert(greeting);
+    }
+
+    const setContractGreeting = async () => {
+      const greeting = inputEl.value;
+      await contract.setGreeting(greeting);
+      inputEl.value = '';
+      alert('Greeting set!');
+    }
+
+    const initContract = async () => {
+      // provider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      contractJson = await fetch('smart-contract/artifacts/contracts/Greeter.sol/Greeter.json').then(res => res.json());
+
+      contract = new ethers.Contract(
+        '0xdc64a140aa3e981100a9beca4e685f962f0cf6c9',
+        contractJson.abi,
+        // provider
+        provider.getSigner()
+      );
+
+      contractBtn.style.visibility = 'visible';
+      contractBtn.addEventListener('click', getContractGreeting);
+      inputEl.style.visibility = 'visible';
+      inputEl.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          setContractGreeting();
+        }
+      });
+    }
+
+    if (window.ethereum) {
+      connectBtn.addEventListener('click', connectWallet);
+    };
+  </script>
+  <script>
+    /*
+    * Advanced usage:
+    */
+    ethereum.on('accountsChanged', (accounts) => {
+      // Handle the new accounts, or lack thereof.
+      // "accounts" will always be an array, but it can be empty.
+    });
+
+    ethereum.on('chainChanged', (chainId) => {
+      // Handle the new chain.
+      // Correctly handling chain changes can be complicated.
+      // We recommend reloading the page unless you have good reason not to.
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

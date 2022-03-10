@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Dapp</title>
+</head>
+<body>
+  <h1 id="addressEl"></h1>
+  <h2 id="balanceEl"></h2>
+  <button id="connectBtn">Connect</button>
+  <button id="contractBtn" style="visibility: hidden;">Get Contract Greeting!</button>
+  <input id="inputEl" style="visibility: hidden;" type="text">
+
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+  <script>
+    const addressEl = document.querySelector('#addressEl');
+    const balanceEl = document.querySelector('#balanceEl');
+    const connectBtn = document.querySelector('#connectBtn');
+    const contractBtn = document.querySelector('#contractBtn');
+    const inputEl = document.querySelector('#inputEl');
+
+    let address;
+    let balance;
+    let provider;
+    let contractJson;
+    let contract;
+
+    const connectWallet = async () => {
+      /* Complete this function */
+    }
+
+    const getContractGreeting = async () => {
+      /* Complete this function */
+    }
+
+    const setContractGreeting = async () => {
+      /* Complete this function */
+    }
+
+    const initContract = async () => {
+      /* Complete this function */
+    }
+
+    if (window.ethereum) {
+      /* Complete this function */
+    };
+  </script>
+</body>
+</html>
