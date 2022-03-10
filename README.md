@@ -2,24 +2,36 @@
 
 ## Smart contract
 
-`mkdir smart-contract`
-`cd smart-contract`
+```bash
+mkdir smart-contract
+```
 
+```bash
+cd smart-contract
+```
 ### Install
 
-`npm install --save-dev hardhat`
+```bash
+npm install --save-dev hardhat
+```
 
 ### Build
 
-`npx hardhat compile`
+```bash
+npx hardhat compile
+```
 
 ### Local blockchain
 
-`npx hardhat node`
+```bash
+npx hardhat node
+```
 
 ### Deploy Contract to local blockchain
 
-`npx hardhat run scripts/sample-script.js --network localhost`
+```bash
+npx hardhat run scripts/sample-script.js --network localhost
+```
 
 ### Metamask setup local network
 
@@ -33,12 +45,18 @@ Currency Symbol: ETH
 
 ### Take some ETH from local blockchain
 
-`cp -R ../teaching-material/tasks .`
+```bash
+cp -R ../teaching-material/tasks .
+```
 
-`cp ../teaching-material/hardhat.config.js .`
+```bash
+cp ../teaching-material/hardhat.config.js .
+```
 
-`npx hardhat --network localhost faucet <your address>`
+```bash
+npx hardhat --network localhost faucet <your address>
+```
 
 ## Dapp
 
-Finish the index-START.html file.
+Finish `index-START.html` file.
